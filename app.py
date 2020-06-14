@@ -23,6 +23,7 @@ def woman():
     all_clother = Clothers.objects()
     return render_template("woman.html",all_clother= all_clother,indexnum=indexnum)
 
+
 @app.route('/womandetail/<womanid>', methods = ["GET","POST"])
 def womandetail(womanid):
     allproduct = Orderproduct.objects()
