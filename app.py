@@ -1,6 +1,7 @@
 from flask import *
 import mlab
-
+from models.mancloth import Mancloth
+from models.orderproduct import Orderproduct
 app = Flask(__name__)
 
 mlab.connect()
@@ -71,6 +72,26 @@ def detail(imgid):
         )
         orderproduct.save()
         return redirect(url_for('shoppcard'))
+
+
+@app.route('/shoppcard')
+def shoppcard():
+    allproduct = Orderproduct.objects()
+    total = 0
+    indexnum = 0
+    for product in allproduct:
+        indexnum += 1
+        total += product.price * product.count
+    return render_template("shoppcard.html", allproduct=allproduct, total=total, indexnum=indexnum)
+# delete product in shopcard
+@app.route('/delete/<productid>')
+def delete(productid):
+    product_to_delete = Orderproduct.objects.with_id(productid)
+    if product_to_delete is not None:
+        product_to_delete.delete()
+        return redirect(url_for('shoppcard'))
+    else:
+        return "Service not found"
 
 
 if __name__ == '__main__':
