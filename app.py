@@ -3,8 +3,10 @@ import mlab
 from models.mancloth import Mancloth
 from models.clothers import Clothers
 from models.orderproduct import Orderproduct
+from models.customer_infor import Customerinfor
 app = Flask(__name__)
-
+# session required a secret key . 
+app.secret_key = "very secret key"
 mlab.connect()
 
 
@@ -139,6 +141,47 @@ def success():
     for i in all_orderproduct:
         indexnum += 1
     return render_template("success.html",indexnum = indexnum)
+
+@app.route('/adminAll')
+def adminAll():
+    if "token" in session:
+        return render_template("adminAll.html")
+    else:
+        return redirect(url_for("login"))
+@app.route('/login',methods = ["GET","POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+    elif request.method == "POST":
+        form = request.form
+        username = form["username"]
+        password = form["password"]
+
+        if username =="admin" and password =="admin":
+            # add a key into dictionary: namedict["namekey"]
+            session["token"] = True
+            return redirect(url_for("adminAll"))
+        else:
+            return "Login False"
+@app.route('/logout')
+def logout():
+    del session['token']
+    return redirect(url_for("login"))        
+
+# admin customer order product
+@app.route('/admin')
+def admin():
+    all_infor = Customerinfor.objects()
+    return render_template("admin.html",all_infor = all_infor)
+# delete infor customer order
+@app.route('/admindelete/<inforid>')
+def admindelete(inforid):
+    admin_delete = Customerinfor.objects.with_id(inforid)
+    if admin_delete is not None:
+        admin_delete.delete()
+        return redirect(url_for('admin'))
+    else:
+        return "Service not found"
 
 if __name__ == '__main__':
     app.run(debug=True)
