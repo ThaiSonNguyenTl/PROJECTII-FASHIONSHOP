@@ -5,7 +5,7 @@ from models.clothers import Clothers
 from models.orderproduct import Orderproduct
 from models.customer_infor import Customerinfor
 app = Flask(__name__)
-# session required a secret key . 
+# session required a secret key .
 app.secret_key = "very secret key"
 mlab.connect()
 
@@ -96,10 +96,11 @@ def delete(productid):
     else:
         return "Service not found"
 
-@app.route('/payment', methods = ["GET","POST"])
+
+@app.route('/payment', methods=["GET", "POST"])
 def payment():
     allproduct = Orderproduct.objects()
-    indexnum = 0 
+    indexnum = 0
     total = 0
     count = 0
     listordered = []
@@ -114,33 +115,35 @@ def payment():
         listordered.append(image)
         listordered.append(everyProCount)
     if request.method == "GET":
-        return render_template('payment.html',indexnum = indexnum,allproduct = allproduct,total = total)
+        return render_template('payment.html', indexnum=indexnum, allproduct=allproduct, total=total)
     else:
         form = request.form
-        customerinfor = Customerinfor(           
-            listordered = listordered,
-            total = total,
-            count = count,
-            name = form["name"],
-            numberphone = form["numberphone"],
-            mail = form["mail"],
-            city = form["city"],
-            district = form["district"],
-            address = form["address"],
-           
+        customerinfor = Customerinfor(
+            listordered=listordered,
+            total=total,
+            count=count,
+            name=form["name"],
+            numberphone=form["numberphone"],
+            mail=form["mail"],
+            city=form["city"],
+            district=form["district"],
+            address=form["address"],
+
         )
         customerinfor.save()
         return redirect(url_for('success'))
-    
+
+
 @app.route('/success')
 def success():
     # delete product from the shopping card when order success
     all_orderproduct = Orderproduct.objects()
     all_orderproduct.delete()
-    indexnum = 0 
+    indexnum = 0
     for i in all_orderproduct:
         indexnum += 1
-    return render_template("success.html",indexnum = indexnum)
+    return render_template("success.html", indexnum=indexnum)
+
 
 @app.route('/adminAll')
 def adminAll():
@@ -148,7 +151,9 @@ def adminAll():
         return render_template("adminAll.html")
     else:
         return redirect(url_for("login"))
-@app.route('/login',methods = ["GET","POST"])
+
+
+@app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
@@ -157,22 +162,24 @@ def login():
         username = form["username"]
         password = form["password"]
 
-        if username =="admin" and password =="admin":
+        if username == "admin" and password == "admin":
             # add a key into dictionary: namedict["namekey"]
             session["token"] = True
             return redirect(url_for("adminAll"))
         else:
             return "Login False"
+
+
 @app.route('/logout')
 def logout():
     del session['token']
-    return redirect(url_for("login"))        
+    return redirect(url_for("login"))
 
 # admin customer order product
 @app.route('/admin')
 def admin():
     all_infor = Customerinfor.objects()
-    return render_template("admin.html",all_infor = all_infor)
+    return render_template("admin.html", all_infor=all_infor)
 # delete infor customer order
 @app.route('/admindelete/<inforid>')
 def admindelete(inforid):
@@ -182,6 +189,64 @@ def admindelete(inforid):
         return redirect(url_for('admin'))
     else:
         return "Service not found"
+
+# admin all product man,woman
+@app.route('/adminProduct')
+def adminProduct():
+    allproduct = Mancloth.objects()
+    all_clother = Clothers.objects()
+    x = len(allproduct)
+    return render_template("adminProduct.html", allproduct=allproduct, all_clother=all_clother, x=x)
+# delete product man
+@app.route('/deleteProduct/<productid>')
+def deleteProduct(productid):
+    product_delete = Mancloth.objects.with_id(productid)
+    if product_delete is not None:
+        product_delete.delete()
+        return redirect(url_for('adminProduct'))
+    else:
+        return "Service not found"
+
+# delete product woman
+@app.route('/deleteWoman/<prodwomanid>')
+def deleteWoman(prodwomanid):
+    delete_product_woman = Clothers.objects.with_id(prodwomanid)
+    if delete_product_woman is not None:
+        delete_product_woman.delete()
+        return redirect(url_for('adminProduct'))
+    else:
+        return "Service not found"
+
+
+@app.route('/createWoman', methods=["GET", "POST"])
+def createWoman():
+    if request.method == "GET":
+        return render_template("create.html")
+    else:
+        form = request.form
+        createwoman = Clothers(
+            title=form["title"],
+            image=form["image"],
+            price=form["price"]
+        )
+        createwoman.save()
+        return redirect(url_for('adminProduct'))
+
+
+@app.route('/createMan', methods=["GET", "POST"])
+def createMan():
+    if request.method == "GET":
+        return render_template("create.html")
+    else:
+        form = request.form
+        createman = Mancloth(
+            title=form["title"],
+            image=form["image"],
+            price=form["price"]
+        )
+        createman.save()
+        return redirect(url_for('adminProduct'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

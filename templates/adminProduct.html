@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>adminProduct</title>
+    {% include "meta-data.html" %}
+  </head>
+  <body>
+    <div class="container">
+      <div class="btn-group mt-4">
+        <button
+          type="button"
+          class="btn btn-success dropdown-toggle"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Thêm sản phẩm
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{{url_for('createMan')}}">Man</a>
+          <a class="dropdown-item" href="{{url_for('createWoman')}}">Woman</a>
+        </div>
+      </div>
+      <h3>Danh sách sản phẩm</h3>
+      <table class="w3-table w3-striped">
+        <tr>
+          <th class="w3-center">STT</th>
+          <th class="w3-center">Sản phẩm</th>
+          <th class="w3-center">Tên sản phẩm</th>
+          <th class="w3-center">Giá</th>
+          <th></th>
+        </tr>
+        {% for productMan in allproduct %}
+        <tr>
+          <td class="w3-center">{{ loop.index }}</td>
+          <td class="w3-center">
+            <img
+              src="{{productMan.image}}"
+              class="img-thumbnail"
+              alt=""
+              width="15%"
+            />
+          </td>
+          <td class="w3-center">{{ productMan.title }}</td>
+          <td class="w3-center">{{ productMan.price }}</td>
+          <td class="w3-center">
+            <a href="{{ url_for('deleteProduct',productid = productMan.id) }}"
+              ><i class="fa fa-trash text-dark w3-hover-text-red"> Xóa</i></a
+            >
+          </td>
+        </tr>
+        {% endfor %} {% for productWoman in all_clother %}
+        <tr>
+          <td class="w3-center">{{ loop.index + x }}</td>
+          <td class="w3-center">
+            <img
+              src="{{productWoman.image}}"
+              class="img-thumbnail"
+              alt=""
+              width="15%"
+            />
+          </td>
+          <td class="w3-center">{{ productWoman.title }}</td>
+          <td class="w3-center">{{ productWoman.price }}</td>
+          <td class="w3-center">
+            <a href="{{ url_for('deleteWoman',prodwomanid = productWoman.id) }}"
+              ><i class="fa fa-trash text-dark w3-hover-text-red"> Xóa</i></a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <br />
+      <a href="{{ url_for('adminAll') }}">
+        <button class="w3-button w3-black float-md-right">Thoát</button></a
+      >
+      <br /><br />
+    </div>
+    <a
+      href="#"
+      class="w3-button w3-black w3-padding-large w3-margin-bottom float-md-right"
+      ><i class="fa fa-arrow-up w3-margin-right"></i
+    ></a>
+  </body>
+</html>

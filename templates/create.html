@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>create</title>
+    {% include "meta-data.html" %}
+  </head>
+  <body>
+    <div class="container" style="margin-top: 60px;">
+      <form method="post" class="w3-container w3-card-4">
+        <br />
+        <p>
+          <label class="w3-text-blue"><b>Tên sản phẩm</b></label>
+          <input class="w3-input w3-border" name="title" type="text" required />
+        </p>
+
+        <p>
+          <label class="w3-text-blue"><b>Giá sản phẩm</b></label>
+          <input
+            class="w3-input w3-border"
+            name="price"
+            type="number"
+            required
+          />
+        </p>
+
+        <p>
+          <label class="w3-text-blue"><b>Ảnh sản phẩm</b></label>
+          <input class="w3-input w3-border" name="image" type="text" required />
+        </p>
+
+        <p>
+          <button class="w3-btn w3-blue">Thêm</button>
+        </p>
+      </form>
+    </div>
+  </body>
+</html>
