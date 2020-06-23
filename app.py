@@ -3,7 +3,7 @@ import mlab
 from models.mancloth import Mancloth
 from models.clothers import Clothers
 from models.orderproduct import Orderproduct
-from models.customer_infor import Customerinfor
+from models.inforCustomer import Customerinfor
 app = Flask(__name__)
 # session required a secret key .
 app.secret_key = "very secret key"
@@ -21,17 +21,28 @@ def index():
 
 @app.route('/woman')
 def woman():
+    allproduct = Orderproduct.objects()
+    indexnum = 0
+    for product in allproduct:
+        indexnum += 1
     # get all document from dabase
     all_clother = Clothers.objects()
-    return render_template("woman.html", all_clother=all_clother)
+    return render_template("woman.html",
+                           all_clother=all_clother,
+                           indexnum=indexnum)
 
 
 @app.route('/womandetail/<womanid>', methods=["GET", "POST"])
 def womandetail(womanid):
-
+    allproduct = Orderproduct.objects()
+    indexnum = 0
+    for product in allproduct:
+        indexnum += 1
     woman_id = Clothers.objects.with_id(womanid)
     if request.method == "GET":
-        return render_template("womandetail.html", woman_id=woman_id)
+        return render_template("womandetail.html",
+                               woman_id=woman_id,
+                               indexnum=indexnum)
     else:
         form = request.form
         orderproduct = Orderproduct(
@@ -52,7 +63,9 @@ def man():
     for product in allproduct:
         indexnum += 1
     all_clothman = Mancloth.objects()
-    return render_template("man.html", all_clothman=all_clothman, indexnum=indexnum)
+    return render_template("man.html",
+                           all_clothman=all_clothman,
+                           indexnum=indexnum)
 
 
 @app.route('/detail/<imgid>', methods=["GET", "POST"])
@@ -167,7 +180,8 @@ def login():
             session["token"] = True
             return redirect(url_for("adminAll"))
         else:
-            return "Login False"
+            flash('Username or password wrong! Please try again!')
+            return redirect(url_for('login'))
 
 
 @app.route('/logout')
