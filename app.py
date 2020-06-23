@@ -1,6 +1,7 @@
 from flask import *
 import mlab
 from models.mancloth import Mancloth
+from models.clothers import Clothers
 from models.orderproduct import Orderproduct
 app = Flask(__name__)
 
@@ -93,6 +94,51 @@ def delete(productid):
     else:
         return "Service not found"
 
+@app.route('/payment', methods = ["GET","POST"])
+def payment():
+    allproduct = Orderproduct.objects()
+    indexnum = 0 
+    total = 0
+    count = 0
+    listordered = []
+    for product in allproduct:
+        indexnum += 1
+        total += product.price * product.count
+        count += product.count
+        title = product["title"]
+        image = product["image"]
+        everyProCount = product["count"]
+        listordered.append(title)
+        listordered.append(image)
+        listordered.append(everyProCount)
+    if request.method == "GET":
+        return render_template('payment.html',indexnum = indexnum,allproduct = allproduct,total = total)
+    else:
+        form = request.form
+        customerinfor = Customerinfor(           
+            listordered = listordered,
+            total = total,
+            count = count,
+            name = form["name"],
+            numberphone = form["numberphone"],
+            mail = form["mail"],
+            city = form["city"],
+            district = form["district"],
+            address = form["address"],
+           
+        )
+        customerinfor.save()
+        return redirect(url_for('success'))
+    
+@app.route('/success')
+def success():
+    # delete product from the shopping card when order success
+    all_orderproduct = Orderproduct.objects()
+    all_orderproduct.delete()
+    indexnum = 0 
+    for i in all_orderproduct:
+        indexnum += 1
+    return render_template("success.html",indexnum = indexnum)
 
 if __name__ == '__main__':
     app.run(debug=True)
